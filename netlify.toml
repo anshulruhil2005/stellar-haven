@@ -1,15 +1,16 @@
 [build]
+  # Root se hi build hoga
   command = "npm run build:client"
-  functions = "netlify/functions"
   publish = "dist/spa"
 
-
 [functions]
-  external_node_modules = ["express"]
+  # Functions ka folder yahi hai tumhare project me
+  directory = "netlify/functions"
   node_bundler = "esbuild"
-  
+  external_node_modules = ["express"]
+
 [[redirects]]
-  force = true
   from = "/api/*"
-  status = 200
   to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
