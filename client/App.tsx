@@ -21,14 +21,15 @@ import Terms from "./pages/Terms";
 import ReturnsRefunds from "./pages/ReturnsRefunds";
 import ShippingInfo from "./pages/ShippingInfo";
 
-
-
+// ⭐ Correct import (case-sensitive) ⭐
+import { CartProvider}  from "./context/CartContext";
+ 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-   
+     <CartProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -48,7 +49,7 @@ const App = () => (
           <Toaster />
           <Sonner />
         </BrowserRouter>
-    
+      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
