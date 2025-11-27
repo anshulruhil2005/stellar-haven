@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 
+// Pages
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import About from "./pages/About";
@@ -14,6 +15,7 @@ import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import NotFound from "./pages/NotFound";
 
+// Extra Pages
 import ProductDetails from "./pages/ProductDetails";
 import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -21,7 +23,9 @@ import Terms from "./pages/Terms";
 import ReturnsRefunds from "./pages/ReturnsRefunds";
 import ShippingInfo from "./pages/ShippingInfo";
 
+// ⭐ FIXED IMPORT – MUST MATCH FOLDER + FILE NAME EXACTLY ⭐
 import { CartProvider } from "./context/CartContext";
+
 
 const queryClient = new QueryClient();
 
@@ -39,7 +43,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/cart" element={<Cart />} />
 
-            {/* Footer static pages */}
+            {/* Footer pages */}
             <Route path="/faq" element={<FAQ />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<Terms />} />
