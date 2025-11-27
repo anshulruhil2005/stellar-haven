@@ -14,8 +14,6 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import NotFound from "./pages/NotFound";
-
-// Extra Pages
 import ProductDetails from "./pages/ProductDetails";
 import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -23,8 +21,7 @@ import Terms from "./pages/Terms";
 import ReturnsRefunds from "./pages/ReturnsRefunds";
 import ShippingInfo from "./pages/ShippingInfo";
 
-// ⭐ FIXED IMPORT – MUST MATCH FOLDER + FILE NAME EXACTLY ⭐
-//import { CartProvider } from "./context/CartContext";
+// ⭐ Correct import (case-sensitive) ⭐
 import { CartProvider } from "./context/CartContext";
 
 const queryClient = new QueryClient();
@@ -35,26 +32,20 @@ const App = () => (
       <CartProvider>
         <BrowserRouter>
           <Routes>
-            {/* Main pages */}
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/cart" element={<Cart />} />
-
-            {/* Footer pages */}
             <Route path="/faq" element={<FAQ />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/returns-refunds" element={<ReturnsRefunds />} />
             <Route path="/shipping-info" element={<ShippingInfo />} />
-
-            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
 
-          {/* Toasts */}
           <Toaster />
           <Sonner />
         </BrowserRouter>
