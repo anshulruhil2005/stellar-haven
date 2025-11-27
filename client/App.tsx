@@ -22,14 +22,14 @@ import ReturnsRefunds from "./pages/ReturnsRefunds";
 import ShippingInfo from "./pages/ShippingInfo";
 
 // ⭐ Correct import (case-sensitive) ⭐
-import { CartProvider } from "./context/CartContext";
+import { CartProvider}  from "./context/CartContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <CartProvider>
+     <CartProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
