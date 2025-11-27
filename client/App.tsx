@@ -24,8 +24,8 @@ import ReturnsRefunds from "./pages/ReturnsRefunds";
 import ShippingInfo from "./pages/ShippingInfo";
 
 // ⭐ FIXED IMPORT – MUST MATCH FOLDER + FILE NAME EXACTLY ⭐
+//import { CartProvider } from "./context/CartContext";
 import { CartProvider } from "./context/CartContext";
-
 
 const queryClient = new QueryClient();
 
