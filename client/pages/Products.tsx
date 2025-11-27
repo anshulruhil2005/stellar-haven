@@ -1,121 +1,14 @@
-import { useState } from "react";
+// client/pages/Products.tsx
+
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
 import ProductCard from "../components/ProductCard";
 import HeroWithBanners from "../components/HeroWithBanners";
 import { ChevronDown, Filter, X } from "lucide-react";
+import { allProducts } from "../lib/products";
 
-// Mock products data
-const allProducts = [
-  {
-    id: "1",
-    name: "iPhone 15 Pro Max",
-    price: 139999,
-    image: "https://images.unsplash.com/photo-1592286927505-1def25115558?w=500&h=500&fit=crop",
-    rating: 5,
-    reviews: 324,
-    category: "Mobiles",
-  },
-  {
-    id: "2",
-    name: "MacBook Pro 16",
-    price: 199999,
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&h=500&fit=crop",
-    rating: 5,
-    reviews: 256,
-    category: "Laptops",
-  },
-  {
-    id: "3",
-    name: "Apple Watch Series 9",
-    price: 41999,
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=500&fit=crop",
-    rating: 4.5,
-    reviews: 182,
-    category: "Smart Watches",
-  },
-  {
-    id: "4",
-    name: "AirPods Pro 2",
-    price: 26999,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop",
-    rating: 4.5,
-    reviews: 412,
-    category: "Earbuds",
-  },
-  {
-    id: "5",
-    name: "Samsung Galaxy S24",
-    price: 79999,
-    image: "https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=500&h=500&fit=crop",
-    rating: 4,
-    reviews: 198,
-    category: "Mobiles",
-  },
-  {
-    id: "6",
-    name: "iPad Air 2024",
-    price: 74999,
-    image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500&h=500&fit=crop",
-    rating: 5,
-    reviews: 276,
-    category: "Tablets",
-  },
-  {
-    id: "7",
-    name: "Dell Inspiron 15",
-    price: 55999,
-    image: "https://images.unsplash.com/photo-1588872657840-790ff3bde4c7?w=500&h=500&fit=crop",
-    rating: 4,
-    reviews: 145,
-    category: "Laptops",
-  },
-  {
-    id: "8",
-    name: "OnePlus Watch 2",
-    price: 19999,
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=500&fit=crop",
-    rating: 4,
-    reviews: 87,
-    category: "Smart Watches",
-  },
-  {
-    id: "9",
-    name: "Sony WH-1000XM5",
-    price: 24999,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop",
-    rating: 5,
-    reviews: 523,
-    category: "Earbuds",
-  },
-  {
-    id: "10",
-    name: "Realme 12 Pro",
-    price: 34999,
-    image: "https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=500&h=500&fit=crop",
-    rating: 4.5,
-    reviews: 267,
-    category: "Mobiles",
-  },
-  {
-    id: "11",
-    name: "HP Pavilion 15",
-    price: 49999,
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&h=500&fit=crop",
-    rating: 4,
-    reviews: 112,
-    category: "Laptops",
-  },
-  {
-    id: "12",
-    name: "Boat Airdopes 131",
-    price: 2999,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop",
-    rating: 3.5,
-    reviews: 891,
-    category: "Earbuds",
-  },
-];
-
+// Home page ke "Shop by Category" wale names yahi hai:
 const categories = [
   "Mobiles",
   "Laptops",
@@ -125,269 +18,335 @@ const categories = [
   "Home Appliances",
 ];
 
-const productsBanners = [
-  {
-    id: "1",
-    image: "https://images.unsplash.com/photo-1511707267537-b85faf00021e?w=1200&h=600&fit=crop",
-    title: "Latest Smartphones",
-    subtitle: "Exclusive deals on flagship devices from top brands",
-    link: "/products",
-  },
-  {
-    id: "2",
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&h=600&fit=crop",
-    title: "Gaming Laptops",
-    subtitle: "High-performance machines for gamers and creators",
-    link: "/products",
-  },
-  {
-    id: "3",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&h=600&fit=crop",
-    title: "Wearable Tech",
-    subtitle: "Smart watches and fitness trackers at best prices",
-    link: "/products",
-  },
-];
-
 export default function Products() {
+  const location = useLocation();
+
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 200000 });
   const [minRating, setMinRating] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Filter products
-  const filteredProducts = allProducts.filter((product) => {
-    const matchesCategory = !selectedCategory || product.category === selectedCategory;
-    const matchesPrice =
-      product.price >= priceRange.min && product.price <= priceRange.max;
-    const matchesRating = product.rating >= minRating;
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+  // ✅ Home se jab /products?category=mobiles aata hai
+  // yahan se category pick karke filter me set karenge
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const raw = params.get("category");
 
-    return matchesCategory && matchesPrice && matchesRating && matchesSearch;
-  });
+    if (!raw) {
+      setSelectedCategory(null);
+      return;
+    }
+
+    const match = categories.find(
+      (cat) => cat.toLowerCase() === raw.toLowerCase()
+    );
+
+    setSelectedCategory(match || null);
+  }, [location.search]);
+
+  // Products filter logic
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((product) => {
+      const matchesCategory =
+        !selectedCategory || product.category === selectedCategory;
+
+      const matchesPrice =
+        product.price >= priceRange.min &&
+        product.price <= priceRange.max;
+
+      const matchesRating = product.rating >= minRating;
+
+      const matchesSearch = product.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+      return (
+        matchesCategory && matchesPrice && matchesRating && matchesSearch
+      );
+    });
+  }, [selectedCategory, priceRange, minRating, searchTerm]);
 
   return (
     <Layout>
-      {/* Hero Section with Banners */}
-      <HeroWithBanners
-        title="Products"
-        subtitle="Browse our complete collection of authentic electronics"
-        ctaText="Shop Now"
-        ctaLink="/products"
-        banners={productsBanners}
-      />
+      {/* Top hero + banners (same jaise pehle) */}
+      <HeroWithBanners />
 
-      {/* Main Content */}
       <section className="section-padding bg-background">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Mobile Filter Toggle */}
-            <div className="lg:hidden mb-4">
-              <button
-                onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-                className="flex items-center gap-2 bg-primary text-white font-bold px-4 py-2 rounded-lg w-full justify-center"
-              >
-                <Filter className="w-5 h-5" />
-                Filters
-              </button>
+        <div className="container-custom max-w-6xl mx-auto">
+          {/* Page heading */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">
+                All Products
+              </h1>
+              <p className="text-muted-foreground text-sm md:text-base mt-1">
+                Browse Mobiles, Laptops, Smart Watches, Earbuds and more.
+              </p>
             </div>
 
-            {/* Filters Sidebar */}
-            <div
-              className={`${
-                isMobileFilterOpen ? "block" : "hidden"
-              } lg:block lg:col-span-1`}
+            {/* Mobile filter button */}
+            <button
+              className="md:hidden inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border text-sm"
+              onClick={() => setIsMobileFilterOpen(true)}
             >
-              <div className="bg-white dark:bg-card rounded-lg shadow-md p-6">
-                {/* Close button for mobile */}
-                {isMobileFilterOpen && (
-                  <button
-                    onClick={() => setIsMobileFilterOpen(false)}
-                    className="lg:hidden mb-4 w-full flex justify-end"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                )}
+              <Filter className="w-4 h-4" />
+              Filters
+            </button>
+          </div>
 
-                {/* Search */}
-                <div className="mb-6">
-                  <label className="block text-sm font-bold text-foreground mb-2">
-                    Search Products
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                {/* Categories */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold text-foreground mb-3">
-                    Categories
-                  </h3>
-                  <div className="space-y-2">
+          <div className="grid gap-8 lg:grid-cols-[260px,1fr]">
+            {/* ================= LEFT: FILTER PANEL ================= */}
+            <aside className="hidden lg:block">
+              <div className="bg-card border border-border rounded-2xl p-4 space-y-6">
+                {/* Category filter */}
+                <div>
+                  <h2 className="text-sm font-semibold mb-3">
+                    Category
+                  </h2>
+                  <div className="flex flex-col gap-2">
                     <button
                       onClick={() => setSelectedCategory(null)}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                        selectedCategory === null
-                          ? "bg-primary text-white font-bold"
-                          : "hover:bg-tech-gray dark:hover:bg-tech-gray"
+                      className={`text-xs text-left px-3 py-2 rounded-lg border ${
+                        !selectedCategory
+                          ? "bg-primary text-white border-primary"
+                          : "border-border text-muted-foreground hover:bg-muted"
                       }`}
                     >
                       All Categories
                     </button>
-                    {categories.map((category) => (
-                      <button
-                        key={category}
-                        onClick={() => setSelectedCategory(category)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          selectedCategory === category
-                            ? "bg-primary text-white font-bold"
-                            : "hover:bg-tech-gray dark:hover:bg-tech-gray"
-                        }`}
-                      >
-                        {category}
-                      </button>
-                    ))}
+                    {categories.map((cat) => {
+                      const active = selectedCategory === cat;
+                      return (
+                        <button
+                          key={cat}
+                          onClick={() => setSelectedCategory(cat)}
+                          className={`text-xs text-left px-3 py-2 rounded-lg border ${
+                            active
+                              ? "bg-primary text-white border-primary"
+                              : "border-border text-muted-foreground hover:bg-muted"
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Price Range */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold text-foreground mb-3">
-                    Price Range
-                  </h3>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-sm text-muted-foreground mb-1">
-                        Min: ₹{priceRange.min.toLocaleString()}
-                      </label>
+                {/* Price filter */}
+                <div>
+                  <h2 className="text-sm font-semibold mb-3">Price</h2>
+                  <div className="space-y-2 text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between">
+                      <span>Min</span>
                       <input
-                        type="range"
-                        min="0"
-                        max="200000"
-                        step="5000"
+                        type="number"
+                        className="w-24 px-2 py-1 rounded-md border border-input bg-background text-right text-xs"
                         value={priceRange.min}
                         onChange={(e) =>
-                          setPriceRange({
-                            ...priceRange,
-                            min: parseInt(e.target.value),
-                          })
+                          setPriceRange((prev) => ({
+                            ...prev,
+                            min: Number(e.target.value || 0),
+                          }))
                         }
-                        className="w-full"
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm text-muted-foreground mb-1">
-                        Max: ₹{priceRange.max.toLocaleString()}
-                      </label>
+                    <div className="flex items-center justify-between">
+                      <span>Max</span>
                       <input
-                        type="range"
-                        min="0"
-                        max="200000"
-                        step="5000"
+                        type="number"
+                        className="w-24 px-2 py-1 rounded-md border border-input bg-background text-right text-xs"
                         value={priceRange.max}
                         onChange={(e) =>
-                          setPriceRange({
-                            ...priceRange,
-                            max: parseInt(e.target.value),
-                          })
+                          setPriceRange((prev) => ({
+                            ...prev,
+                            max: Number(e.target.value || 0),
+                          }))
                         }
-                        className="w-full"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Rating Filter */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold text-foreground mb-3">
+                {/* Rating filter */}
+                <div>
+                  <h2 className="text-sm font-semibold mb-3">
                     Minimum Rating
-                  </h3>
-                  <div className="space-y-2">
-                    {[0, 3.5, 4, 4.5, 5].map((rating) => (
-                      <button
-                        key={rating}
-                        onClick={() => setMinRating(rating)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-                          minRating === rating
-                            ? "bg-primary text-white font-bold"
-                            : "hover:bg-tech-gray dark:hover:bg-tech-gray"
-                        }`}
-                      >
-                        {rating === 0 ? (
-                          "All Ratings"
-                        ) : (
-                          <>
-                            {rating}★ & Up
-                          </>
-                        )}
-                      </button>
-                    ))}
-                  </div>
+                  </h2>
+                  <select
+                    value={minRating}
+                    onChange={(e) => setMinRating(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+                  >
+                    <option value={0}>All ratings</option>
+                    <option value={3}>3★ & above</option>
+                    <option value={4}>4★ & above</option>
+                  </select>
+                </div>
+              </div>
+            </aside>
+
+            {/* ================= RIGHT: PRODUCTS LIST ================= */}
+            <main className="space-y-4">
+              {/* Search + sort line */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="relative w-full md:max-w-xs">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-input bg-background text-sm pr-8"
+                  />
+                  <ChevronDown className="w-4 h-4 absolute right-2 top-2.5 text-muted-foreground rotate-90" />
                 </div>
 
-                {/* Clear Filters */}
-                <button
-                  onClick={() => {
-                    setSelectedCategory(null);
-                    setPriceRange({ min: 0, max: 200000 });
-                    setMinRating(0);
-                    setSearchTerm("");
-                  }}
-                  className="w-full bg-secondary hover:bg-tech-black text-secondary-foreground font-bold py-2 rounded-lg transition-colors"
-                >
-                  Clear Filters
-                </button>
-              </div>
-            </div>
-
-            {/* Products Grid */}
-            <div className="lg:col-span-3">
-              {/* Results Counter */}
-              <div className="mb-6 flex justify-between items-center">
-                <p className="text-muted-foreground">
-                  Showing <span className="font-bold">{filteredProducts.length}</span> products
+                <p className="text-xs text-muted-foreground">
+                  Showing{" "}
+                  <span className="font-semibold">
+                    {filteredProducts.length}
+                  </span>{" "}
+                  products
+                  {selectedCategory && (
+                    <>
+                      {" "}
+                      in{" "}
+                      <span className="font-semibold">
+                        {selectedCategory}
+                      </span>
+                    </>
+                  )}
                 </p>
               </div>
 
-              {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Product grid */}
+              {filteredProducts.length === 0 ? (
+                <div className="bg-card border border-dashed border-border rounded-2xl p-8 text-center text-sm text-muted-foreground">
+                  No products found for this filter. Try changing category,
+                  price or search.
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 lg:gap-6">
                   {filteredProducts.map((product) => (
                     <ProductCard key={product.id} {...product} />
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-2xl font-bold text-foreground mb-2">
-                    No products found
-                  </p>
-                  <p className="text-muted-foreground mb-6">
-                    Try adjusting your filters or search term
-                  </p>
-                  <button
-                    onClick={() => {
-                      setSelectedCategory(null);
-                      setPriceRange({ min: 0, max: 200000 });
-                      setMinRating(0);
-                      setSearchTerm("");
-                    }}
-                    className="bg-primary hover:bg-tech-blue-dark text-white font-bold py-2 px-6 rounded-lg transition-colors"
-                  >
-                    Clear Filters
-                  </button>
-                </div>
               )}
-            </div>
+            </main>
           </div>
         </div>
       </section>
+
+      {/* ---------- Mobile Filters Drawer ---------- */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-50 bg-black/40 md:hidden">
+          <div className="absolute inset-y-0 right-0 w-80 max-w-[80%] bg-card border-l border-border p-4 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold">Filters</h2>
+              <button
+                className="p-1 rounded-lg hover:bg-muted"
+                onClick={() => setIsMobileFilterOpen(false)}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-6 text-sm">
+              {/* Category */}
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Category</h3>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setSelectedCategory(null)}
+                    className={`px-3 py-1.5 rounded-full border text-xs ${
+                      !selectedCategory
+                        ? "bg-primary text-white border-primary"
+                        : "border-border text-muted-foreground"
+                    }`}
+                  >
+                    All
+                  </button>
+                  {categories.map((cat) => {
+                    const active = selectedCategory === cat;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setSelectedCategory(cat)}
+                        className={`px-3 py-1.5 rounded-full border text-xs ${
+                          active
+                            ? "bg-primary text-white border-primary"
+                            : "border-border text-muted-foreground"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Price */}
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Price</h3>
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <div className="flex items-center justify-between">
+                    <span>Min</span>
+                    <input
+                      type="number"
+                      className="w-24 px-2 py-1 rounded-md border border-input bg-background text-right text-xs"
+                      value={priceRange.min}
+                      onChange={(e) =>
+                        setPriceRange((prev) => ({
+                          ...prev,
+                          min: Number(e.target.value || 0),
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Max</span>
+                    <input
+                      type="number"
+                      className="w-24 px-2 py-1 rounded-md border border-input bg-background text-right text-xs"
+                      value={priceRange.max}
+                      onChange={(e) =>
+                        setPriceRange((prev) => ({
+                          ...prev,
+                          max: Number(e.target.value || 0),
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Rating */}
+              <div>
+                <h3 className="text-sm font-semibold mb-2">
+                  Minimum Rating
+                </h3>
+                <select
+                  value={minRating}
+                  onChange={(e) => setMinRating(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+                >
+                  <option value={0}>All ratings</option>
+                  <option value={3}>3★ & above</option>
+                  <option value={4}>4★ & above</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              className="mt-4 w-full py-2.5 rounded-xl bg-primary text-white text-sm font-semibold"
+              onClick={() => setIsMobileFilterOpen(false)}
+            >
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

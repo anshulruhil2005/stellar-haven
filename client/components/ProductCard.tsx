@@ -1,15 +1,9 @@
 import { Star, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import type { Product } from "../lib/products";
 
-interface ProductCardProps {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  category: string;
-}
+interface ProductCardProps extends Product {}
 
 export default function ProductCard({
   id,
@@ -20,62 +14,73 @@ export default function ProductCard({
   reviews,
   category,
 }: ProductCardProps) {
+  const { addToCart } = useCart();
+
   return (
     <Link
       to={`/product/${id}`}
-      className="bg-white dark:bg-card rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
+      className="group bg-tech-gray/40 dark:bg-card border border-tech-gray-light/40 rounded-2xl overflow-hidden flex flex-col hover:border-primary/60 hover:shadow-lg hover:shadow-primary/10 transition-all"
     >
-      {/* Image Container */}
-      <div className="relative h-48 md:h-56 bg-tech-gray dark:bg-tech-gray overflow-hidden">
+      {/* Image */}
+      <div className="relative bg-tech-gray flex items-center justify-center aspect-[4/3] overflow-hidden">
         <img
           src={image}
           alt={name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
         />
-        {/* Category Badge */}
-        <span className="absolute top-3 right-3 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
-          {category}
-        </span>
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="font-bold text-lg text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+      <div className="flex-1 flex flex-col gap-2 p-3 sm:p-4">
+        <span className="text-[11px] uppercase tracking-wide text-primary/80 font-semibold">
+          {category}
+        </span>
+
+        <h3 className="text-sm sm:text-base font-semibold text-foreground line-clamp-2">
           {name}
         </h3>
 
         {/* Rating */}
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${
-                  i < Math.floor(rating)
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "text-gray-300"
-                }`}
-              />
-            ))}
+            <div className="flex items-center">
+              {Array.from({ length: 5 }).map((_, index) => {
+                const value = index + 1;
+                return (
+                  <Star
+                    key={value}
+                    className={
+                      "w-3 h-3 " +
+                      (value <= Math.round(rating)
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "text-gray-500")
+                    }
+                  />
+                );
+              })}
+            </div>
+            <span>{rating.toFixed(1)}</span>
           </div>
-          <span className="text-sm text-muted-foreground">
-            ({reviews})
-          </span>
+          <span>{reviews} reviews</span>
         </div>
 
-        {/* Price and Button */}
-        <div className="flex items-center justify-between mt-4">
+        {/* Price + button */}
+        <div className="mt-1 flex items-center justify-between">
           <div>
-            <p className="text-2xl font-bold text-primary">₹{price.toLocaleString()}</p>
+            <p className="text-[11px] text-muted-foreground">Price</p>
+            <p className="text-base sm:text-lg font-bold text-primary">
+              ₹{price.toLocaleString()}
+            </p>
           </div>
           <button
             onClick={(e) => {
-              e.preventDefault();
-              // Add to cart logic
+              e.preventDefault(); // card ke link ko rokna
+              addToCart(id);
             }}
-            className="bg-primary hover:bg-tech-blue-dark text-white p-2 rounded-lg transition-colors"
+            className="inline-flex items-center justify-center rounded-xl bg-primary hover:bg-primary/90 text-white p-2 sm:px-3 sm:py-2 text-xs sm:text-sm font-semibold transition-colors"
           >
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart className="w-4 h-4 mr-1" />
+            Add
           </button>
         </div>
       </div>

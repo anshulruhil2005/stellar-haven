@@ -1,5 +1,13 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+} from "lucide-react";
 
 export default function Footer() {
   return (
@@ -73,12 +81,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/faq"
                   className="text-gray-300 hover:text-primary transition-colors"
                 >
                   FAQ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -88,36 +96,36 @@ export default function Footer() {
             <h4 className="font-bold text-lg mb-4">Policies</h4>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/privacy-policy"
                   className="text-gray-300 hover:text-primary transition-colors"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/terms"
                   className="text-gray-300 hover:text-primary transition-colors"
                 >
-                  Terms & Conditions
-                </a>
+                  Terms &amp; Conditions
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/returns-refunds"
                   className="text-gray-300 hover:text-primary transition-colors"
                 >
-                  Returns & Refunds
-                </a>
+                  Returns &amp; Refunds
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/shipping-info"
                   className="text-gray-300 hover:text-primary transition-colors"
                 >
                   Shipping Info
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -141,9 +149,7 @@ export default function Footer() {
               </div>
               <div className="flex gap-3 items-start">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-gray-300">
-                  Bangalore, India
-                </span>
+                <span className="text-gray-300">Bangalore, India</span>
               </div>
             </div>
           </div>
